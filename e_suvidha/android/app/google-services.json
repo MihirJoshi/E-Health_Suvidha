@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "688521420711",
+    "project_id": "e-healthsuvidha",
+    "storage_bucket": "e-healthsuvidha.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:688521420711:android:88ca8640005fd4b551a082",
+        "android_client_info": {
+          "package_name": "com.example.e_suvidha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "688521420711-qrqrmoc0b2l46qe70jf6c5glinin4s9r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.e_suvidha",
+            "certificate_hash": "fefdecd3bfce5eb57efd6dc1cbbe479fbe455fc1"
+          }
+        },
+        {
+          "client_id": "688521420711-1euf6gvuphn103e5mhsgjv30e3k5ant3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9rhnyGW0g49MfOprYnX032qT1UG4Qqx0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "688521420711-1euf6gvuphn103e5mhsgjv30e3k5ant3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
