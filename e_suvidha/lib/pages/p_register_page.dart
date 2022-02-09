@@ -1,4 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_suvidha/models/user_model.dart';
+import 'package:e_suvidha/pages/p_home_screen.dart';
+import 'package:e_suvidha/pages/p_login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class PRegistration extends StatefulWidget {
   const PRegistration({Key? key}) : super(key: key);
@@ -8,6 +14,8 @@ class PRegistration extends StatefulWidget {
 }
 
 class _PRegistrationState extends State<PRegistration> {
+  final _auth = FirebaseAuth.instance;
+
   //form key
   final _formKey = GlobalKey<FormState>();
 
@@ -27,7 +35,17 @@ class _PRegistrationState extends State<PRegistration> {
       autofocus: false,
       controller: firstNameEditingController,
       keyboardType: TextInputType.name,
-      //validator: () {},
+      validator: (value) {
+        RegExp regex = new RegExp(r'^.{2,}$');
+
+        if (value!.isEmpty) {
+          return ("First Name is required for Registration");
+        }
+        if (!regex.hasMatch(value)) {
+          return ("Enter Valid Name(Min. 2 Character)");
+        }
+        return null;
+      },
       onSaved: (value) {
         firstNameEditingController.text = value!;
       },
@@ -46,7 +64,17 @@ class _PRegistrationState extends State<PRegistration> {
       autofocus: false,
       controller: secondNameEditingController,
       keyboardType: TextInputType.name,
-      //validator: () {},
+      validator: (value) {
+        RegExp regex = new RegExp(r'^.{2,}$');
+
+        if (value!.isEmpty) {
+          return ("Last Name is required for Registration");
+        }
+        if (!regex.hasMatch(value)) {
+          return ("Enter Valid Last Name(Min. 2 Character)");
+        }
+        return null;
+      },
       onSaved: (value) {
         secondNameEditingController.text = value!;
       },
@@ -54,7 +82,7 @@ class _PRegistrationState extends State<PRegistration> {
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.account_circle),
         contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-        hintText: "Second Name",
+        hintText: "Last Name",
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
@@ -65,7 +93,16 @@ class _PRegistrationState extends State<PRegistration> {
       autofocus: false,
       controller: emailEditingController,
       keyboardType: TextInputType.emailAddress,
-      //validator: () {},
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("Please Enter your Email");
+        }
+        //reg expression for email
+        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)) {
+          return ("Please Enter the valid Email");
+        }
+        return null;
+      },
       onSaved: (value) {
         emailEditingController.text = value!;
       },
@@ -84,7 +121,16 @@ class _PRegistrationState extends State<PRegistration> {
       autofocus: false,
       controller: passwordEditingController,
       obscureText: true,
-      //validator: () {},
+      validator: (value) {
+        RegExp regex = new RegExp(r'^.{6,}$');
+
+        if (value!.isEmpty) {
+          return ("Password is required for login");
+        }
+        if (!regex.hasMatch(value)) {
+          return ("Enter Valid Password(Min. 6 Character)");
+        }
+      },
       onSaved: (value) {
         passwordEditingController.text = value!;
       },
@@ -103,7 +149,13 @@ class _PRegistrationState extends State<PRegistration> {
       autofocus: false,
       controller: confirmPasswordEditingController,
       obscureText: true,
-      //validator: () {},
+      validator: (value) {
+        if (confirmPasswordEditingController.text !=
+            passwordEditingController.text) {
+          return "Password does not match";
+        }
+        return null;
+      },
       onSaved: (value) {
         confirmPasswordEditingController.text = value!;
       },
@@ -125,7 +177,9 @@ class _PRegistrationState extends State<PRegistration> {
       child: MaterialButton(
         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
-        onPressed: () {},
+        onPressed: () {
+          signUp(emailEditingController.text, passwordEditingController.text);
+        },
         child: Text(
           "Sign Up",
           textAlign: TextAlign.center,
@@ -191,5 +245,45 @@ class _PRegistrationState extends State<PRegistration> {
         ),
       ),
     );
+  }
+
+  void signUp(String email, String password) async {
+    if (_formKey.currentState!.validate()) {
+      await _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) => {postDetailsToFirebase()})
+          .catchError((e) {
+        Fluttertoast.showToast(msg: e!.message);
+      });
+    }
+  }
+
+  postDetailsToFirebase() async {
+    // calling firestore
+    // calling user model
+    // sending the values
+
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+
+    UserModel userModel = UserModel();
+
+    //writing all values
+
+    userModel.email = user!.email;
+    userModel.uid = user.uid;
+    userModel.firstname = firstNameEditingController.text;
+    userModel.secondname = secondNameEditingController.text;
+
+    await firebaseFirestore
+        .collection("users")
+        .doc(user.uid)
+        .set(userModel.toMap());
+    Fluttertoast.showToast(
+        msg: "Account Created Successfully!! \n Login Now !!!");
+    Navigator.pushAndRemoveUntil(
+        (context),
+        MaterialPageRoute(builder: (context) => PLoginPage()),
+        (route) => false);
   }
 }
