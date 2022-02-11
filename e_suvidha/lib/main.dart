@@ -20,7 +20,7 @@ class HealthSuvidha extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: MyRoutes.ploginRoute,
+      initialRoute: MyRoutes.mainPageRoute,
       routes: {
         MyRoutes.splashRoute: (context) => SplashScreen(),
         MyRoutes.mainPageRoute: (context) => Main_Page(),
