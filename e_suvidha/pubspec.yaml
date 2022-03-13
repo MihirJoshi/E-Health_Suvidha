@@ -38,6 +38,7 @@ dependencies:
   form_field_validator: ^1.1.0
   rounded_loading_button: ^2.0.9
   velocity_x: ^3.4.0
+  provider: ^5.0.0
 
 dev_dependencies:
   flutter_launcher_icons: "^0.9.2"
@@ -71,7 +72,9 @@ flutter:
   assets:
     - assets/images/logo.gif
     - assets/images/welcome.png
-    - assets/images/login.png
+    - assets/images/login_new.png
+    - assets/images/register_new.jpg
+    - assets/images/drawer_logo.png
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

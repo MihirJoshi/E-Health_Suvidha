@@ -1,17 +1,17 @@
-class UserModel {
+class DoctorModel {
   String? uid;
   String? email;
   String? firstname;
   String? secondname;
   String? userType;
 
-  UserModel(
+  DoctorModel(
       {this.uid, this.email, this.firstname, this.secondname, this.userType});
 
   // recieving data from the server
 
-  factory UserModel.fromMap(map) {
-    return UserModel(
+  factory DoctorModel.fromMap(map) {
+    return DoctorModel(
       uid: map['uid'],
       email: map['email'],
       firstname: map['firstname'],

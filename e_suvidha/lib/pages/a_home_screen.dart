@@ -1,19 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_suvidha/models/user_model.dart';
-import 'package:e_suvidha/pages/p_home_screen.dart';
-import 'package:e_suvidha/pages/p_login_page.dart';
+import 'package:e_suvidha/models/doctor_model.dart';
+import 'package:e_suvidha/pages/d_login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class PRegistration extends StatefulWidget {
-  const PRegistration({Key? key}) : super(key: key);
+class AHomeScreen extends StatefulWidget {
+  const AHomeScreen({Key? key}) : super(key: key);
 
   @override
-  _PRegistrationState createState() => _PRegistrationState();
+  _AHomeScreenState createState() => _AHomeScreenState();
 }
 
-class _PRegistrationState extends State<PRegistration> {
+class _AHomeScreenState extends State<AHomeScreen> {
   final _auth = FirebaseAuth.instance;
 
   //form key
@@ -36,8 +35,6 @@ class _PRegistrationState extends State<PRegistration> {
 
   @override
   Widget build(BuildContext context) {
-    // first name field
-
     final firstNameField = TextFormField(
       autofocus: false,
       controller: _firstNameEditingController,
@@ -208,7 +205,7 @@ class _PRegistrationState extends State<PRegistration> {
           },
         ),
         title: Text(
-          "Patient Registration",
+          "Doctor Registration",
           style: TextStyle(color: Colors.black),
         ),
       ),
@@ -300,7 +297,7 @@ class _PRegistrationState extends State<PRegistration> {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
 
-    UserModel userModel = UserModel();
+    DoctorModel userModel = DoctorModel();
 
     //writing all values
 
@@ -308,17 +305,17 @@ class _PRegistrationState extends State<PRegistration> {
     userModel.uid = user.uid;
     userModel.firstname = _firstNameEditingController.text;
     userModel.secondname = _secondNameEditingController.text;
-    userModel.userType = "Patient";
+    userModel.userType = "Doctor";
 
     await firebaseFirestore
-        .collection("users")
+        .collection("doctors")
         .doc(user.uid)
         .set(userModel.toMap());
     Fluttertoast.showToast(
         msg: "Account Created Successfully!! \n Login Now !!!");
     Navigator.pushAndRemoveUntil(
         (context),
-        MaterialPageRoute(builder: (context) => PLoginPage()),
+        MaterialPageRoute(builder: (context) => DLoginPage()),
         (route) => false);
   }
 }

@@ -7,7 +7,7 @@ class Main_Page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffF7FFE8),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -47,7 +47,9 @@ class Main_Page extends StatelessWidget {
                         side: BorderSide(width: 1, color: Colors.blue)),
                   ),
                   child: Text('Admin Login'),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, MyRoutes.aloginRoute);
+                  },
                 ),
               ),
             ),
@@ -62,7 +64,9 @@ class Main_Page extends StatelessWidget {
                         side: BorderSide(width: 1, color: Colors.blue)),
                   ),
                   child: Text('Doctor Login'),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, MyRoutes.dloginRoute);
+                  },
                 ),
               ),
             ),

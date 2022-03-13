@@ -1,25 +1,25 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_suvidha/models/user_model.dart';
-import 'package:e_suvidha/pages/p_home_screen.dart';
+import 'package:e_suvidha/pages/a_home_screen.dart';
 //import 'package:e_suvidha/pages/p_register_page.dart';
 import 'package:e_suvidha/utils/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 //import 'package:velocity_x/velocity_x.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
-class PLoginPage extends StatefulWidget {
-  const PLoginPage({Key? key}) : super(key: key);
+class ALoginPage extends StatefulWidget {
+  const ALoginPage({Key? key}) : super(key: key);
 
   @override
-  _PLoginPageState createState() => _PLoginPageState();
+  _ALoginPageState createState() => _ALoginPageState();
 }
 
-class _PLoginPageState extends State<PLoginPage> {
+class _ALoginPageState extends State<ALoginPage> {
   Future<FirebaseApp> _initializeFirebase() async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
     return firebaseApp;
@@ -56,13 +56,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   //editing controller
 
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailController = new TextEditingController();
+  final _passwordController = new TextEditingController();
 
   // firebase connection
+
+  final _auth = FirebaseAuth.instance;
   bool _passwordVisible = true;
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-  UserModel loggedInUser = UserModel();
 
   // string for displaying the error Message
   String? errorMessage;
@@ -73,20 +74,22 @@ class _LoginScreenState extends State<LoginScreen> {
       {required String email,
       required String password,
       required BuildContext context}) async {
-    print(email);
-    print(password);
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
-    try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      user = userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == "user-not-found") {
-        Fluttertoast.showToast(msg: "No user Found with this Email Address");
+    if (email == "mihiradmin@esuvidha.com" && password == "Mihir@esuvidha") {
+      FirebaseAuth auth = FirebaseAuth.instance;
+      User? user;
+      try {
+        UserCredential userCredential = await auth.signInWithEmailAndPassword(
+            email: email, password: password);
+        user = userCredential.user;
+      } on FirebaseAuthException catch (e) {
+        if (e.code == "user-not-found") {
+          print("no user found with this credential");
+        }
       }
+      return user;
+    } else {
+      Fluttertoast.showToast(msg: "No Admin with such details");
     }
-    return user;
   }
 
   Future<void> signIn() async {
@@ -95,28 +98,10 @@ class _LoginScreenState extends State<LoginScreen> {
           email: _emailController.text,
           password: _passwordController.text,
           context: context);
+      print(user);
       if (user != null) {
-        try {
-          CollectionReference db =
-              FirebaseFirestore.instance.collection('users');
-          FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get()
-              .then((value) {
-            this.loggedInUser = UserModel.fromMap(value.data());
-            print(loggedInUser);
-            if (loggedInUser.userType != "Patient" && loggedInUser.uid == []) {
-              Fluttertoast.showToast(msg: "Malpractice found");
-            } else {
-              Fluttertoast.showToast(msg: "Login Successful");
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => PHomeScreen()));
-            }
-          });
-        } on FirebaseAuthException catch (e) {
-          print(e.message);
-        }
+        Fluttertoast.showToast(msg: "Login Successfull");
+        Navigator.pushNamed(context, MyRoutes.ahomeRoute);
       }
     }
   }
@@ -201,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
           signIn();
         },
         child: Text(
-          "Login",
+          "Admin Login",
           textAlign: TextAlign.center,
           style: TextStyle(
               fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
@@ -243,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             repeatForever: false,
                             totalRepeatCount: 1,
                             animatedTexts: [
-                              RotateAnimatedText("Patient Login",
+                              RotateAnimatedText("Admin Login",
                                   rotateOut: false)
                             ],
                           ),
@@ -293,98 +278,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------
-/* void signIn(String email, String password) async {
-      if (_formKey.currentState!.validate()) {
-        User? user;
-        try {
-          UserCredential userCredential = await _auth
-              .signInWithEmailAndPassword(email: email, password: password);
-          user = userCredential.user;
-          if (user != null) {
-            CollectionReference db =
-                FirebaseFirestore.instance.collection('users');
-            FirebaseFirestore.instance
-                .collection("users")
-                .doc(user.uid)
-                .get()
-                .then((value) {
-              this.loggedInUser = UserModel.fromMap(value.data());
-              print(user);
-            });
-            if (loggedInUser == "Patient") {
-              Fluttertoast.showToast(msg: "Login Successful");
-              Navigator.pushNamed(context, MyRoutes.phomeRoute);
-            }
-          }
-        } on FirebaseAuthException catch (error) {
-          switch (error.code) {
-            case "invalid-email":
-              errorMessage = "Your email address appears to be malformed.";
-
-              break;
-            case "wrong-password":
-              errorMessage = "Your password is wrong.";
-              break;
-            case "user-not-found":
-              errorMessage = "User with this email doesn't exist.";
-              break;
-            case "user-disabled":
-              errorMessage = "User with this email has been disabled.";
-              break;
-            case "too-many-requests":
-              errorMessage = "Too many requests";
-              break;
-            case "operation-not-allowed":
-              errorMessage =
-                  "Signing in with Email and Password is not enabled.";
-              break;
-            default:
-              errorMessage = "An undefined Error happened.";
-          }
-          Fluttertoast.showToast(msg: errorMessage!);
-          print(error.code);
-        }
-      }
-    } */
-/*static Future<User?> loginusingEmailPassword(
-      {required String email,
-      required String password,
-      required BuildContext context}) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
-    try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      user = userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == "user-not-found") {
-        print("no user found with this credential");
-      }
-    }
-    return user;
-  }
-
-  Future<void> signIn() async {
-    if (_formKey.currentState!.validate()) {
-      User? user = await loginusingEmailPassword(
-          email: email,
-          password: password,
-          context: context);
-      if (user != null && loggedInUser == "Patient") {
-        CollectionReference db = FirebaseFirestore.instance.collection('users');
-        FirebaseFirestore.instance
-            .collection("users")
-            .doc(user.uid)
-            .get()
-            .then((value) {
-          this.loggedInUser = UserModel.fromMap(value.data());
-        });
-
-        if (loggedInUser.userType == "Patient") {
-          Navigator.pushNamed(context, MyRoutes.phomeRoute);
-        }
-      }
-    }
-  }*/
