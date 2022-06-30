@@ -42,6 +42,7 @@ class _PRegistrationState extends State<PRegistration> {
       autofocus: false,
       controller: _firstNameEditingController,
       keyboardType: TextInputType.name,
+      autovalidateMode: AutovalidateMode.always,
       validator: (value) {
         RegExp regex = new RegExp(r'^.{2,}$');
 
@@ -70,6 +71,7 @@ class _PRegistrationState extends State<PRegistration> {
     final secondNameField = TextFormField(
       autofocus: false,
       controller: _secondNameEditingController,
+      autovalidateMode: AutovalidateMode.always,
       keyboardType: TextInputType.name,
       validator: (value) {
         RegExp regex = new RegExp(r'^.{2,}$');
@@ -99,6 +101,7 @@ class _PRegistrationState extends State<PRegistration> {
     final emailField = TextFormField(
       autofocus: false,
       controller: _emailEditingController,
+      autovalidateMode: AutovalidateMode.always,
       keyboardType: TextInputType.emailAddress,
       validator: (value) {
         if (value!.isEmpty) {
@@ -127,6 +130,7 @@ class _PRegistrationState extends State<PRegistration> {
     final passwordField = TextFormField(
       autofocus: false,
       controller: _passwordEditingController,
+      autovalidateMode: AutovalidateMode.always,
       obscureText: true,
       validator: (value) {
         RegExp regex = new RegExp(r'^.{6,}$');
@@ -155,6 +159,7 @@ class _PRegistrationState extends State<PRegistration> {
     final confirmPasswordField = TextFormField(
       autofocus: false,
       controller: _confirmPasswordEditingController,
+      autovalidateMode: AutovalidateMode.always,
       obscureText: true,
       validator: (value) {
         if (_confirmPasswordEditingController.text !=

@@ -71,43 +71,47 @@ class _LoginScreenState extends State<LoginScreen> {
     print(email);
     print(password);
     FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
+    User? doctor;
     try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
           email: email, password: password);
-      user = userCredential.user;
+      doctor = userCredential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == "user-not-found") {
         Fluttertoast.showToast(msg: "No user Found with this Email Address");
       }
+      if (e.code != password) {
+        Fluttertoast.showToast(msg: "Password is not match");
+      }
     }
-    return user;
+    return doctor;
   }
 
   Future<void> signIn() async {
     if (_formKey.currentState!.validate()) {
-      User? user = await loginusingEmailPassword(
+      User? doctor = await loginusingEmailPassword(
           email: _emailController.text,
           password: _passwordController.text,
           context: context);
-      if (user != null) {
-        print(user.uid);
-        CollectionReference db =
-            FirebaseFirestore.instance.collection('doctors');
-        FirebaseFirestore.instance
-            .collection('doctors')
-            .doc(user.uid)
-            .get()
-            .then((value) {
-          this.loggedInUser = DoctorModel.fromMap(value.data());
-        });
-
-        if (loggedInUser.userType == "Doctor") {
-          Fluttertoast.showToast(msg: "Login Successful");
-          Navigator.pushNamed(context, MyRoutes.dhomeRoute);
+      if (doctor != null) {
+        try {
+          print(doctor.uid);
+          CollectionReference db =
+              FirebaseFirestore.instance.collection('doctors');
+          FirebaseFirestore.instance
+              .collection('doctors')
+              .doc(doctor.uid)
+              .get()
+              .then((value) {
+            this.loggedInUser = DoctorModel.fromMap(value.data());
+            if (loggedInUser.userType == "Doctor") {
+              Fluttertoast.showToast(msg: "Login Successful");
+              Navigator.pushNamed(context, MyRoutes.dhomeRoute);
+            }
+          });
+        } on NoSuchMethodError catch (e) {
+          Fluttertoast.showToast(msg: "Entered id is not a Doctor ID");
         }
-      } else {
-        Fluttertoast.showToast(msg: "Malpractice found, you can't login");
       }
     }
   }
@@ -118,6 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
       autofocus: false,
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
+      autovalidateMode: AutovalidateMode.always,
       validator: (value) {
         if (value!.isEmpty) {
           return ("Please Enter your Email");
@@ -146,6 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
       autofocus: false,
       controller: _passwordController,
       obscureText: _passwordVisible,
+      autovalidateMode: AutovalidateMode.always,
       validator: (value) {
         RegExp regex = new RegExp(r'^.{6,}$');
 
@@ -198,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
     return Scaffold(
-      backgroundColor: Color(0xffF7FFE8),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -212,12 +218,12 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            color: Color(0xffF7FFE8),
+            color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Form(
                 key: _formKey,
-                autovalidate: true,
+                //autovalidate: true,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -256,14 +262,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text("Don't have an account? "),
+                        Text("Forgot Password ? "),
                         GestureDetector(
                           onTap: () {
                             Navigator.pushNamed(
                                 context, MyRoutes.pregisterRoute);
                           },
                           child: Text(
-                            "SignUp",
+                            "Click Here",
                             style: TextStyle(
                                 color: Colors.redAccent,
                                 fontWeight: FontWeight.bold,

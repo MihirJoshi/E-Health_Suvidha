@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_suvidha/models/user_model.dart';
+import 'package:e_suvidha/pages/Patient/p_home_screen.dart';
+import 'package:e_suvidha/pages/main_page.dart';
 import 'package:e_suvidha/pages/p_home_screen.dart';
 //import 'package:e_suvidha/pages/p_register_page.dart';
 import 'package:e_suvidha/utils/routes.dart';
+import 'package:e_suvidha/widgets/patient_navigation_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -85,6 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (e.code == "user-not-found") {
         Fluttertoast.showToast(msg: "No user Found with this Email Address");
       }
+      if (e.code != password) {
+        Fluttertoast.showToast(msg: "Password is not match");
+      }
     }
     return user;
   }
@@ -110,12 +116,12 @@ class _LoginScreenState extends State<LoginScreen> {
               Fluttertoast.showToast(msg: "Malpractice found");
             } else {
               Fluttertoast.showToast(msg: "Login Successful");
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => PHomeScreen()));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => PNavigationHomeScreen()));
             }
           });
-        } on FirebaseAuthException catch (e) {
-          print(e.message);
+        } on NoSuchMethodError catch (e) {
+          Fluttertoast.showToast(msg: "Entered id is not a Patient ID");
         }
       }
     }
@@ -209,26 +215,25 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
     return Scaffold(
-      backgroundColor: Color(0xffF7FFE8),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => Main_Page())),
         ),
       ),
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            color: Color(0xffF7FFE8),
+            color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Form(
                 key: _formKey,
-                autovalidate: true,
+                autovalidateMode: AutovalidateMode.always,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -261,7 +266,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     emailField,
                     SizedBox(height: 25),
                     passwordField,
-                    SizedBox(height: 35),
+                    SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, MyRoutes.reset_pass);
+                          },
+                          child: Text(
+                            "Forgot Password ?",
+                            style: TextStyle(
+                                color: Colors.redAccent,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 15),
                     loginButton,
                     SizedBox(height: 15),
                     Row(

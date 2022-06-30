@@ -194,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
     return Scaffold(
-      backgroundColor: Color(0xffF7FFE8),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -208,12 +208,12 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            color: Color(0xffF7FFE8),
+            color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Form(
                 key: _formKey,
-                autovalidate: true,
+                autovalidateMode: AutovalidateMode.always,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -249,25 +249,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(height: 35),
                     loginButton,
                     SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text("Don't have an account? "),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, MyRoutes.pregisterRoute);
-                          },
-                          child: Text(
-                            "SignUp",
-                            style: TextStyle(
-                                color: Colors.redAccent,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15),
-                          ),
-                        )
-                      ],
-                    ),
                   ],
                 ),
               ),
